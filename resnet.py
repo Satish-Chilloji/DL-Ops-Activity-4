@@ -16,16 +16,16 @@ transform = transforms.Compose([
 trainset = datasets.FashionMNIST(root='./data', train=True, download=True, transform=transform)
 trainloader = torch.utils.data.DataLoader(trainset, batch_size=64, shuffle=True)
 
-# Load pre-trained ResNet18 model
-resnet18 = torchvision.models.resnet18(pretrained=True)
+# Load pre-trained ResNet101 model
+resnet101 = torchvision.models.resnet101(pretrained=True)
 
 # Modify the classifier to adapt it to FashionMNIST classification task
-num_ftrs = resnet18.fc.in_features
-resnet18.fc = nn.Linear(num_ftrs, 10)  # 10 classes in FashionMNIST
+num_ftrs = resnet101.fc.in_features
+resnet101.fc = nn.Linear(num_ftrs, 10)  # 10 classes in FashionMNIST
 
 # Define loss function and optimizer
 criterion = nn.CrossEntropyLoss()
-optimizer = optim.RMSprop(resnet18.parameters(), lr=0.001)
+optimizer = optim.RMSprop(resnet101.parameters(), lr=0.001)
 
 # Training loop
 epochs = 10
@@ -33,8 +33,8 @@ losses = []
 accuracies = []
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-resnet18.to(device)
-resnet18.train()
+resnet101.to(device)
+resnet101.train()
 
 for epoch in range(epochs):
     running_loss = 0.0
@@ -45,7 +45,7 @@ for epoch in range(epochs):
         inputs, labels = data[0].to(device), data[1].to(device)
         optimizer.zero_grad()
 
-        outputs = resnet18(inputs)
+        outputs = resnet101(inputs)
         loss = criterion(outputs, labels)
         loss.backward()
         optimizer.step()
